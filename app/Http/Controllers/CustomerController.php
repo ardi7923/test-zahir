@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Customer;
+use App\Http\Requests\CustomerRequest;
 
 class CustomerController extends Controller
 {
@@ -28,7 +29,7 @@ class CustomerController extends Controller
                 ->orWhere('name', 'like', '%' . $search . '%')
                 ->get();
 
-            return response(200,$customers);
+            return response(200,["data" =>  $customers]);
         }else{
             
             $customers = Customer::query();
@@ -50,7 +51,7 @@ class CustomerController extends Controller
                 $customers->where('phone', 'like', '%' . $phone . '%');
             }
 
-            return response(200, $customers->paginate($limit));
+            return response(200, ["data" => $customers->paginate($limit)]);
         }
     }
 
@@ -60,9 +61,11 @@ class CustomerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
-        //
+        Customer::create($request->all());
+
+        return response(201,["message" => "data berhasil ditambah"]);
     }
 
     /**
@@ -83,9 +86,12 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CustomerRequest $request, $id)
     {
-        //
+        $customer =Customer::find($id);
+        $customer->update($request->all());
+
+        return response(201,["message" => "data berhasil ubah"]);
     }
 
     /**
@@ -96,6 +102,8 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+         Customer::findOrFail($id)->delete();
+        
+         return response(200,["message" => "Data Berhasil Dihapus"]);
     }
 }

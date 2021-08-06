@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-Route::resourceApi('v1/user', CustomerController::class);
+Route::resource('v1/user', CustomerController::class);
